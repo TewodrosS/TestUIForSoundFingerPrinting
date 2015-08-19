@@ -16,8 +16,8 @@ namespace FingerPrintingAPI
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{file}",
+                defaults: new { file = RouteParameter.Optional }    
             );
         }
     }
