@@ -15,7 +15,7 @@ namespace ClientConsole
     class Program
     {
         static void Main(string[] args)
-        {
+        {                                  
             string url = "http://localhost:7375/";
             string path = @"D:\GraduationMusic\ATsednya\Tsedenia GM - Atalay.mp3";
 
@@ -23,6 +23,8 @@ namespace ClientConsole
             Stream fileStream = File.Open(path, FileMode.Open);
 
             var byteFile = ReadFully(fileStream);
+
+            var base64Doc = Convert.ToBase64String(byteFile);
 
             HttpContent content = new ByteArrayContent(byteFile);
             

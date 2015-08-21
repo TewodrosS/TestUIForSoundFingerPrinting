@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FingerPrintingAPI", "Finger
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientConsole", "ClientConsole\ClientConsole.csproj", "{D8E457F7-3CF1-4C7F-A355-2591D66FDD82}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsClient", "WindowsFormsClient\WindowsFormsClient.csproj", "{4BDB7CC1-7D6D-4D00-AD19-2457D9FE14D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D8E457F7-3CF1-4C7F-A355-2591D66FDD82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8E457F7-3CF1-4C7F-A355-2591D66FDD82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8E457F7-3CF1-4C7F-A355-2591D66FDD82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BDB7CC1-7D6D-4D00-AD19-2457D9FE14D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BDB7CC1-7D6D-4D00-AD19-2457D9FE14D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BDB7CC1-7D6D-4D00-AD19-2457D9FE14D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BDB7CC1-7D6D-4D00-AD19-2457D9FE14D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

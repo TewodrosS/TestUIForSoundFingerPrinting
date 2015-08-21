@@ -24,6 +24,7 @@ namespace FingerPrintingAPI
         public BinaryMediaTypeFormatter(bool isAsync)
         {
             SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/octet-stream"));
+            SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
             IsAsync = isAsync;
         }
         public bool IsAsync

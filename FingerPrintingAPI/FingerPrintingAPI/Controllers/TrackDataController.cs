@@ -1,4 +1,5 @@
 ﻿using FingerPrintingAPI.Models;
+using Newtonsoft.Json;
 using SoundFingerprinting;
 using SoundFingerprinting.Audio;
 using SoundFingerprinting.Audio.Bass;
@@ -14,13 +15,14 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Http;
 
 namespace FingerPrintingAPI.Controllers
 {
     public class TrackDataController : ApiController
-    {        
+    {
         private IQueryCommandBuilder queryCommandBuilder = new QueryCommandBuilder();
         private ITagService tagService = new BassTagService();
         private IModelService modelService = new SqlModelService();
@@ -28,35 +30,36 @@ namespace FingerPrintingAPI.Controllers
         IFingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
 
         [HttpPost]
-        public IHttpActionResult GetTrackData(string file)
+        public TrackDataExternal GetTrackData(string file)
         {
             TrackData result = null;
-            string filePath= string.Empty;
-            
+            string filePath = string.Empty;
+
             var task = this.Request.Content.ReadAsStreamAsync();
             task.Wait();
 
             int length = (int)task.Result.Length;
-            Stream requestStream = task.Result;
-
-            //var byteReq = ReadFully(requestStream);
-
-            try
+            using (Stream requestStream = task.Result)
             {
-                filePath = @"D:\Dev\Temp\" + file;
-                Stream fileStream = File.Create(filePath, length);
-                requestStream.CopyTo(fileStream);
-                fileStream.Close();
-                requestStream.Close();
-            }
-            catch (IOException)
-            {
-                throw new HttpResponseException(
-                    new HttpResponseMessage
+                try
+                {
+                    filePath = @"D:\Dev\Temp\" + file + DateTime.Now.Ticks;
+                    using (Stream fileStream = File.Create(filePath, length))
                     {
-                        ReasonPhrase = "Could not read the request",
-                        StatusCode = HttpStatusCode.InternalServerError
-                    });
+                        requestStream.CopyTo(fileStream);
+                        fileStream.Close();
+                        requestStream.Close();
+                    }
+                }
+                catch (IOException)
+                {
+                    throw new HttpResponseException(
+                        new HttpResponseMessage
+                        {
+                            ReasonPhrase = "Could not read the request",
+                            StatusCode = HttpStatusCode.InternalServerError
+                        });
+                }
             }
 
             DefaultFingerprintConfiguration configuration = new DefaultFingerprintConfiguration();
@@ -71,10 +74,17 @@ namespace FingerPrintingAPI.Controllers
             result = winQueryResults.ExtractCandidatesWithMinHashAlgorithm(filePath);
 
             if (result == null)
-                return NotFound();
-            else
-                return Ok(result);
-        }
+                return null;
+                
+            
+
+            return new TrackDataExternal(result);
+
+            //if (result == null)
+            //    return NotFound();
+            //else
+            //    return Ok(result);
+        }        
 
         public static byte[] ReadFully(Stream input)
         {

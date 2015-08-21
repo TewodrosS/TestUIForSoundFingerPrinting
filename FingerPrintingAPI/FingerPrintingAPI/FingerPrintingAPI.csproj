@@ -194,6 +194,7 @@
     <Compile Include="BinaryMediaTypeFormatter.cs" />
     <Compile Include="Models\HashAlgorithm.cs" />
     <Compile Include="Models\QueryResults.cs" />
+    <Compile Include="Models\TrackData.cs" />
     <Compile Include="Models\WinUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
