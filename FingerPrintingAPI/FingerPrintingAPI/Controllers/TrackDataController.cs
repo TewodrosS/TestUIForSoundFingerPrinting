@@ -10,9 +10,11 @@ using SoundFingerprinting.SQL;
 using SoundFingerprinting.Strides;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FingerPrintingAPI.Controllers
@@ -26,10 +28,36 @@ namespace FingerPrintingAPI.Controllers
         IFingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
 
         [HttpPost]
-        public IHttpActionResult GetTrackData(HttpRequestMessage request)
+        public IHttpActionResult GetTrackData(string file)
         {
             TrackData result = null;
-            string file = request.Content.ReadAsStringAsync().Result;
+            string filePath= string.Empty;
+            
+            var task = this.Request.Content.ReadAsStreamAsync();
+            task.Wait();
+
+            int length = (int)task.Result.Length;
+            Stream requestStream = task.Result;
+
+            //var byteReq = ReadFully(requestStream);
+
+            try
+            {
+                filePath = @"D:\Dev\Temp\" + file;
+                Stream fileStream = File.Create(filePath, length);
+                requestStream.CopyTo(fileStream);
+                fileStream.Close();
+                requestStream.Close();
+            }
+            catch (IOException)
+            {
+                throw new HttpResponseException(
+                    new HttpResponseMessage
+                    {
+                        ReasonPhrase = "Could not read the request",
+                        StatusCode = HttpStatusCode.InternalServerError
+                    });
+            }
 
             DefaultFingerprintConfiguration configuration = new DefaultFingerprintConfiguration();
 
@@ -40,12 +68,26 @@ namespace FingerPrintingAPI.Controllers
                 audioService,
                 queryCommandBuilder);
 
-            result = winQueryResults.ExtractCandidatesWithMinHashAlgorithm(file);
+            result = winQueryResults.ExtractCandidatesWithMinHashAlgorithm(filePath);
 
             if (result == null)
                 return NotFound();
             else
                 return Ok(result);
+        }
+
+        public static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
     }
 }

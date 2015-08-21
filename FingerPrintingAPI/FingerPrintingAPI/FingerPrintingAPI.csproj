@@ -191,6 +191,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="BinaryMediaTypeFormatter.cs" />
     <Compile Include="Models\HashAlgorithm.cs" />
     <Compile Include="Models\QueryResults.cs" />
     <Compile Include="Models\WinUtils.cs" />
