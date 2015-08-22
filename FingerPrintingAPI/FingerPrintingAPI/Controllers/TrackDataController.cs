@@ -6,6 +6,7 @@ using SoundFingerprinting.Audio.Bass;
 using SoundFingerprinting.Audio.NAudio;
 using SoundFingerprinting.Builder;
 using SoundFingerprinting.Configuration;
+using SoundFingerprinting.DAO;
 using SoundFingerprinting.DAO.Data;
 using SoundFingerprinting.SQL;
 using SoundFingerprinting.Strides;
@@ -27,7 +28,10 @@ namespace FingerPrintingAPI.Controllers
         private ITagService tagService = new BassTagService();
         private IModelService modelService = new SqlModelService();
         private IAudioService audioService = new NAudioService();
-        IFingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
+        private const int MinTrackLength = 20; /*20 sec - minimal track length*/
+        private const int MaxTrackLength = 60 * 10; /*15 min - maximal track length*/
+        private IFingerprintCommandBuilder fingerprintCommandBuilder = new FingerprintCommandBuilder();
+        private DefaultFingerprintConfiguration configuration = new DefaultFingerprintConfiguration();
 
         [HttpPost]
         public TrackDataExternal GetTrackData(string file)
@@ -62,8 +66,6 @@ namespace FingerPrintingAPI.Controllers
                 }
             }
 
-            DefaultFingerprintConfiguration configuration = new DefaultFingerprintConfiguration();
-
             QueryResults winQueryResults = new QueryResults(10, 20, 25, 4, 5,
                 WinUtils.GetStride(StrideType.IncrementalRandom, 512, 256, configuration.SamplesPerFingerprint),
                 tagService,
@@ -74,17 +76,114 @@ namespace FingerPrintingAPI.Controllers
             result = winQueryResults.ExtractCandidatesWithMinHashAlgorithm(filePath);
 
             if (result == null)
-                return null;
-                
+            {
+                result = InsertToDatabase(filePath);
+                return new TrackDataExternal(result)
+                {
+                    Status = "Not Found and Inserted"
+                };
+            }
+
+            else
+            {
+                return new TrackDataExternal(result)
+                {
+                    Status = "Found"
+                };
+
+            }
             
+        }
 
-            return new TrackDataExternal(result);
+        private TrackData InsertToDatabase(string filePath)
+        {
+            TrackData trackData = null;
 
-            //if (result == null)
-            //    return NotFound();
-            //else
-            //    return Ok(result);
-        }        
+            IStride stride = WinUtils.GetStride(StrideType.IncrementalRandom, 5115, 0, configuration.SamplesPerFingerprint);
+
+            TagInfo tags = tagService.GetTagInfo(filePath); // Get Tags from file
+            if (tags == null || tags.IsEmpty)
+            {
+                // tags null
+            }
+
+            string isrc = tags.ISRC;
+            string artist = tags.Artist; // Artist
+            string title = tags.Title; // Title
+            int releaseYear = tags.Year;
+            string album = tags.Album;
+            double duration = tags.Duration; // Duration
+
+            // Check whether the duration is OK
+            if (duration < MinTrackLength || duration > MaxTrackLength)
+            {
+                // Duration too small                    
+            }
+
+            // Check whether the tags are properly defined
+            if (string.IsNullOrEmpty(isrc) && (string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(title)))
+            {
+                //"ISRC Tag is missing. Skipping file..."
+            }
+
+            IModelReference trackReference;
+            try
+            {
+                lock (this)
+                {
+                    // Check if this file is already in the database
+                    if (IsDuplicateFile(isrc, artist, title))
+                    {
+                        //duplicate file exist
+                    }
+
+                    trackData = new TrackData(isrc, artist, title, album, releaseYear, (int)duration);
+                    trackReference = modelService.InsertTrack(trackData); // Insert new Track in the database                    
+                }
+            }
+            catch (Exception e)
+            {
+                // catch any exception and abort the insertion
+                return trackData;
+            }
+
+            int count;
+            try
+            {
+                var hashDatas = fingerprintCommandBuilder
+                                    .BuildFingerprintCommand()
+                                    .From(filePath)
+                                    .WithFingerprintConfig(
+                                        config =>
+                                        {
+                                            config.TopWavelets = 200;
+                                            config.SpectrogramConfig.Stride = stride;
+                                        })
+                                    .UsingServices(audioService)
+                                    .Hash()
+                                    .Result; // Create SubFingerprints
+
+                modelService.InsertHashDataForTrack(hashDatas, trackReference);
+                count = hashDatas.Count;
+                return trackData;
+            }
+            catch (Exception e)
+            {
+                // catch any exception and abort the insertion
+                return null;
+            }
+
+        }
+
+        private bool IsDuplicateFile(string isrc, string artist, string title)
+        {
+            if (!string.IsNullOrEmpty(isrc))
+            {
+                return modelService.ReadTrackByISRC(isrc) != null;
+            }
+
+            return modelService.ReadTrackByArtistAndTitleName(artist, title).Any();
+        }
 
         public static byte[] ReadFully(Stream input)
         {

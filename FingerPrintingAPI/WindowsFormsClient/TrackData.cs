@@ -8,6 +8,7 @@ namespace WindowsFormsClient
 {
     public class TrackData
     {
+        public string Status { get; set; }
         public string Album { get; set; }
         public string Artist { get; set; }
         public string GroupId { get; set; }
