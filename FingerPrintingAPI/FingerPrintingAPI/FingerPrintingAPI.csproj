@@ -192,10 +192,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="BinaryMediaTypeFormatter.cs" />
+    <Compile Include="Models\AudioRequest.cs" />
     <Compile Include="Models\HashAlgorithm.cs" />
-    <Compile Include="Models\QueryResults.cs" />
+    <Compile Include="Utils\AddAudio.cs" />
+    <Compile Include="Utils\QueryResults.cs" />
     <Compile Include="Models\TrackDataExternal.cs" />
-    <Compile Include="Models\WinUtils.cs" />
+    <Compile Include="Utils\WinUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

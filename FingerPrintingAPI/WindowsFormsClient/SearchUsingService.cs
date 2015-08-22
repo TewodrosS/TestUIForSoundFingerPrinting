@@ -67,7 +67,7 @@ namespace WindowsFormsClient
             return filter.ToString();
         }
 
-        public static byte[] ReadFully(Stream input)
+        public static byte[] ReadByte(Stream input)
         {
             byte[] buffer = new byte[16 * 1024];
             using (MemoryStream ms = new MemoryStream())
@@ -94,14 +94,19 @@ namespace WindowsFormsClient
             string url = textBoxUrl.Text;
             string path = textBoxFilePath.Text;
 
+            AudioRequest request = new AudioRequest();
+
             using(MemoryStream requestStream = new MemoryStream())
             using (Stream fileStream = File.Open(path, FileMode.Open))
             {
-                var byteFile = ReadFully(fileStream);
+                var byteContent = ReadByte(fileStream);
 
-                var base64Doc = Convert.ToBase64String(byteFile);
-
-                HttpContent content = new ByteArrayContent(byteFile);
+                request.Content = byteContent;
+                request.FileName = Path.GetFileNameWithoutExtension(path);
+                request.FileType = Path.GetExtension(path);
+                               
+                var requestContent = JsonConvert.SerializeObject(request);
+                HttpContent content = new StringContent(requestContent, Encoding.UTF8, "application/json");
 
                 using (var client = new HttpClient())
                 {

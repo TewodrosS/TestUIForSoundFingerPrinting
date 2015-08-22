@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FingerPrintingAPI.Models
+namespace FingerPrintingAPI.Utils
 {
     internal static class WinUtils
     {

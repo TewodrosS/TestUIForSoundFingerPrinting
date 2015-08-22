@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace FingerPrintingAPI.Models
+namespace FingerPrintingAPI.Utils
 {
     public class QueryResults
     {
