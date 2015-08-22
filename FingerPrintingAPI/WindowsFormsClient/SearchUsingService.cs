@@ -116,7 +116,7 @@ namespace WindowsFormsClient
 
 
                     // New code:
-                    HttpResponseMessage response = client.PostAsync("api/trackdata/file", content).Result;
+                    HttpResponseMessage response = client.PostAsync("api/trackdata", content).Result;
 
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -125,7 +125,7 @@ namespace WindowsFormsClient
                         if (string.IsNullOrWhiteSpace(stringResult) || stringResult == "null")
                         {
                             resultLable.Text = "Audio Not found";
-                            resultLable.ForeColor = Color.Yellow;
+                            resultLable.ForeColor = Color.Red;
                             resultLable.Visible = true;
 
                         }

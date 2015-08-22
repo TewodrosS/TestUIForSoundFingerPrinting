@@ -35,26 +35,15 @@ namespace FingerPrintingAPI.Controllers
         private DefaultFingerprintConfiguration configuration = new DefaultFingerprintConfiguration();
 
         [HttpPost]
-        public TrackDataExternal GetTrackData(string file)
+        public TrackDataExternal GetTrackData([FromBody]AudioRequest request)
         {
             TrackData result = null;
-            string filePath = string.Empty;
-
-            var task = this.Request.Content.ReadAsStreamAsync();
-            task.Wait();
-
-            int length = (int)task.Result.Length;
-            using (Stream requestStream = task.Result)
-            {
+            string filePath = string.Empty; 
+            
                 try
                 {
-                    filePath = @"D:\Dev\Temp\" + file + DateTime.Now.Ticks;
-                    using (Stream fileStream = File.Create(filePath, length))
-                    {
-                        requestStream.CopyTo(fileStream);
-                        fileStream.Close();
-                        requestStream.Close();
-                    }
+                    filePath = string.Format(@"D:\Dev\Temp\{0}{1}", request.FileName,  request.FileType);
+                    File.WriteAllBytes(filePath, request.Content);
                 }
                 catch (IOException)
                 {
@@ -65,7 +54,7 @@ namespace FingerPrintingAPI.Controllers
                             StatusCode = HttpStatusCode.InternalServerError
                         });
                 }
-            }
+            
 
             QueryResults winQueryResults = new QueryResults(10, 20, 25, 4, 5,
                 WinUtils.GetStride(StrideType.IncrementalRandom, 512, 256, configuration.SamplesPerFingerprint),
@@ -92,22 +81,8 @@ namespace FingerPrintingAPI.Controllers
                     Status = "Found"
                 };
 
-            }
-            
-        }                
+            }            
+        }    
 
-        public static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
-            }
-        }
     }
 }
