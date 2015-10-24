@@ -10,6 +10,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Configuration;
 
 public partial class _Default : Page
 {
@@ -56,7 +57,7 @@ public partial class _Default : Page
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:7375/");
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServiceUrl"]);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
