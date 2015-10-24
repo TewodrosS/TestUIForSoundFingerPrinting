@@ -79,7 +79,7 @@ public partial class _Default : Page
                     else
                     {
                         var result = JsonConvert.DeserializeObject<TrackData>(stringResult);
-                        resultLabel.Text = FormatJson(stringResult);
+                        resultLabel.Text = FormatJson(stringResult).Replace(",", "<br />");;
                         resultLabel.ForeColor = Color.Green;
                         resultLabel.Visible = true;
                     }
