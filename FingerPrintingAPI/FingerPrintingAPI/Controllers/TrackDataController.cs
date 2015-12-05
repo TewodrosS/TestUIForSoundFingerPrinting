@@ -57,17 +57,17 @@ namespace FingerPrintingAPI.Controllers
                 }
             
             var stride = WinUtils.GetStride(
-                    StrideType.IncrementalRandom, 
-                    512, 
-                    256, 
+                    StrideType.IncrementalRandom,
+                    Convert.ToInt32(ConfigurationManager.AppSettings["MaxStride"]),
+                    Convert.ToInt32(ConfigurationManager.AppSettings["MinStride"]), 
                     configuration.SamplesPerFingerprint);
 
             QueryResults winQueryResults = new QueryResults(
-                10,
-                20,
-                25,
-                4, 
-                5,
+                Convert.ToInt32(ConfigurationManager.AppSettings["SecondsToAnalyze"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["StartSecond"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["HashTables"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["HashKeys"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["TreshHold"]),
                 stride,
                 tagService,
                 modelService,
