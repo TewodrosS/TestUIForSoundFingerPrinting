@@ -14,6 +14,7 @@ using System.Configuration;
 
 public partial class _Default : Page
 {
+    private readonly List<string> filters = new List<string>(new[] { "*.mp3", "*.wav", "*.ogg", "*.flac" }); /*File filters*/
     protected void Page_Load(object sender, EventArgs e)
     {
 
@@ -39,59 +40,122 @@ public partial class _Default : Page
         return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
     }
 
-    protected void Button1_Click(object sender, EventArgs e)
+    public static List<string> GetPathToAllFiles(IEnumerable<string> filters, string rootFolder, bool includeSubdirectories)
+    {
+        if (String.IsNullOrEmpty(rootFolder))
+            return null;
+        List<string> fileList = new List<string>();
+        try
+        {
+            fileList.AddRange(filters.SelectMany(filter => Directory.GetFiles(rootFolder, filter, (includeSubdirectories) ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)));
+        }
+        catch
+        {
+            return null;
+        }
+        return fileList;
+    }
+
+    public static List<string> GetFiles(IEnumerable<string> filters, string rootFolder)
+    {
+        List<string> fileList = new List<string>();
+        if (Directory.Exists(rootFolder))
+        {
+            /*If such path exists*/
+            fileList = GetPathToAllFiles(filters, rootFolder, true);
+        }
+
+        return fileList;
+    }
+
+    protected void SendFile_Click(object sender, EventArgs e)
+    {
+        string path = uploadAudioFile.FileName;
+        using (var stream = uploadAudioFile.FileContent)
+        {
+            SendFile(path, stream);
+        }
+
+        //FileAttributes attr = File.GetAttributes(path);
+
+        //if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+        //{
+        //    var fileList = GetFiles(filters, path);
+        //    foreach (var file in fileList)
+        //    {
+        //        SendFile(file);
+        //    }
+        //}        
+    }
+
+    protected void SendMultiple_Click(object sender, EventArgs e)
+    {
+        string path = directoryInput.Value;
+        FileAttributes attr = File.GetAttributes(path);
+
+        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+        {
+            var fileList = GetFiles(filters, path);
+            foreach (var file in fileList)
+            {
+                using (var stream = new FileStream(file, FileMode.Open))
+                {
+                    SendFile(file, stream);
+                }
+            }
+        }
+
+
+    }
+
+    private void SendFile(string path, Stream fileStream)
     {
         AudioRequest request = new AudioRequest();
-        string path = uploadAudioFile.FileName;
 
-        using (Stream fileStream = uploadAudioFile.FileContent)
+        var byteContent = ReadByte(fileStream);
+
+        request.Content = byteContent;
+        request.FileName = Path.GetFileNameWithoutExtension(path);
+        request.FileType = Path.GetExtension(path);
+
+        var requestContent = JsonConvert.SerializeObject(request);
+        HttpContent content = new StringContent(requestContent, Encoding.UTF8, "application/json");
+
+        using (var client = new HttpClient())
         {
-            var byteContent = ReadByte(fileStream);
+            client.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServiceUrl"]);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            request.Content = byteContent;
-            request.FileName = Path.GetFileNameWithoutExtension(path);
-            request.FileType = Path.GetExtension(path);
 
-            var requestContent = JsonConvert.SerializeObject(request);
-            HttpContent content = new StringContent(requestContent, Encoding.UTF8, "application/json");
+            // New code:
+            HttpResponseMessage response = client.PostAsync("api/trackdata", content).Result;
 
-            using (var client = new HttpClient())
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServiceUrl"]);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string stringResult = response.Content.ReadAsStringAsync().Result;
 
-
-                // New code:
-                HttpResponseMessage response = client.PostAsync("api/trackdata", content).Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                if (string.IsNullOrWhiteSpace(stringResult) || stringResult == "null")
                 {
-                    string stringResult = response.Content.ReadAsStringAsync().Result;
-
-                    if (string.IsNullOrWhiteSpace(stringResult) || stringResult == "null")
-                    {
-                        resultLabel.Text = "Audio Not found";
-                        resultLabel.ForeColor = Color.Red;
-                        resultLabel.Visible = true;
-
-                    }
-                    else
-                    {
-                        var result = JsonConvert.DeserializeObject<TrackData>(stringResult);
-                        resultLabel.Text = FormatJson(stringResult).Replace(",", "<br />");;
-                        resultLabel.ForeColor = Color.Green;
-                        resultLabel.Visible = true;
-                    }
-                }
-
-                else
-                {
-                    resultLabel.Text = response.StatusCode.ToString();
+                    resultLabel.Text = resultLabel.Text + "<br /> <br /> <br />" + "Audio Not found";
                     resultLabel.ForeColor = Color.Red;
                     resultLabel.Visible = true;
-                }
 
+                }
+                else
+                {
+                    var result = JsonConvert.DeserializeObject<TrackData>(stringResult);
+                    resultLabel.Text = resultLabel.Text + "<br /> <br /> <br />" + FormatJson(stringResult).Replace(",", "<br />"); ;
+                    resultLabel.ForeColor = Color.Green;
+                    resultLabel.Visible = true;
+                }
+            }
+
+            else
+            {
+                resultLabel.Text = resultLabel.Text + "<br /> <br /> <br />" + response.StatusCode.ToString();
+                resultLabel.ForeColor = Color.Red;
+                resultLabel.Visible = true;
             }
         }
     }

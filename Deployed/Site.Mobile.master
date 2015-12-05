@@ -1,4 +1,4 @@
-﻿<%@ master language="C#" autoeventwireup="true" inherits="Site_Mobile, App_Web_1svs2aey" %>
+﻿<%@ master language="C#" autoeventwireup="true" inherits="Site_Mobile, App_Web_yjtwpxp2" %>
 
 <%@ Register Src="~/ViewSwitcher.ascx" TagPrefix="friendlyUrls" TagName="ViewSwitcher" %>
 

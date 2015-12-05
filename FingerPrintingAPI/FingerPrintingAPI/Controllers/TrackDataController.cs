@@ -13,6 +13,7 @@ using SoundFingerprinting.SQL;
 using SoundFingerprinting.Strides;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -42,7 +43,7 @@ namespace FingerPrintingAPI.Controllers
             
                 try
                 {
-                    filePath = string.Format(@"D:\Dev\Temp\{0}{1}", request.FileName,  request.FileType);
+                    filePath = string.Format(ConfigurationManager.AppSettings["TempFolderTemplate"], request.FileName, request.FileType);
                     File.WriteAllBytes(filePath, request.Content);
                 }
                 catch (IOException)
@@ -55,9 +56,19 @@ namespace FingerPrintingAPI.Controllers
                         });
                 }
             
+            var stride = WinUtils.GetStride(
+                    StrideType.IncrementalRandom, 
+                    512, 
+                    256, 
+                    configuration.SamplesPerFingerprint);
 
-            QueryResults winQueryResults = new QueryResults(10, 20, 25, 4, 5,
-                WinUtils.GetStride(StrideType.IncrementalRandom, 512, 256, configuration.SamplesPerFingerprint),
+            QueryResults winQueryResults = new QueryResults(
+                10,
+                20,
+                25,
+                4, 
+                5,
+                stride,
                 tagService,
                 modelService,
                 audioService,
