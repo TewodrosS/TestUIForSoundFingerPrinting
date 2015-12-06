@@ -25,7 +25,7 @@ namespace FingerPrintingAPI.Utils
         private const string ColResult = "Result";
         private const string ColHammingAvg = "HammingAvg";
         private const string ColNumberOfCandidates = "TotalNumberOfAnalyzedCandidates";
-        private const string ColISRC = "ISRC";
+        //private const string ColISRC = "ISRC";
 
         private readonly int hashKeys;
         private readonly int hashTables;
@@ -81,7 +81,7 @@ namespace FingerPrintingAPI.Utils
             string title = string.IsNullOrEmpty(tags.Title)
                                ? Path.GetFileNameWithoutExtension(pathToFile)
                                : tags.Title; // Title
-            string isrc = tags.ISRC;
+            //string isrc = tags.ISRC;
             double duration = tags.Duration; // Duration
 
             // Check whether the duration is ok
@@ -110,8 +110,7 @@ namespace FingerPrintingAPI.Utils
                                         .Result;
             
             if (!queryResult.IsSuccessful)
-            {
-                File.Delete(pathToFile);
+            {                
                 return null;
             }
 

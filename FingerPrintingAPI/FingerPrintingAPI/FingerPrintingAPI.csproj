@@ -40,8 +40,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net">
-      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.0.0\lib\net45\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.6.4, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.1.0\lib\net45\Bass.Net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
       <HintPath>..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.dll</HintPath>
@@ -50,6 +51,10 @@
       <HintPath>..\packages\MathNet.Numerics.2.6.2\lib\net40\MathNet.Numerics.IO.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
     </Reference>
@@ -60,20 +65,25 @@
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="SoundFingerprinting">
-      <HintPath>..\packages\SoundFingerprinting.2.0.0.0\lib\net45\SoundFingerprinting.dll</HintPath>
+    <Reference Include="SoundFingerprinting, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.2.0.1.0\lib\net45\SoundFingerprinting.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SoundFingerprinting.Audio">
-      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.0.0\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+    <Reference Include="SoundFingerprinting.Audio, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.1.0\lib\net45\SoundFingerprinting.Audio.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SoundFingerprinting.Audio.Bass">
-      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.0.0\lib\net45\SoundFingerprinting.Audio.Bass.dll</HintPath>
+    <Reference Include="SoundFingerprinting.Audio.Bass, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.1.0\lib\net45\SoundFingerprinting.Audio.Bass.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SoundFingerprinting.Audio.NAudio">
-      <HintPath>..\packages\SoundFingerprinting.Audio.NAudio.2.0.0.0\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
+    <Reference Include="SoundFingerprinting.Audio.NAudio, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.Audio.NAudio.2.0.1.0\lib\net45\SoundFingerprinting.Audio.NAudio.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="SoundFingerprinting.Infrastructure">
-      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.0.0\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+    <Reference Include="SoundFingerprinting.Infrastructure, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SoundFingerprinting.Audio.Bass.2.0.1.0\lib\net45\SoundFingerprinting.Infrastructure.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SoundFingerprinting.SQL">
       <HintPath>..\packages\SoundFingerprinting.SQL.2.0.0\lib\net45\SoundFingerprinting.SQL.dll</HintPath>
@@ -93,6 +103,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
@@ -101,9 +115,31 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Web">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />

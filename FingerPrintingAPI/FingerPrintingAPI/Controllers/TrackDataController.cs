@@ -79,6 +79,9 @@ namespace FingerPrintingAPI.Controllers
             if (result == null)
             {
                 result = new AddAudio().InsertToDatabase(filePath);
+
+                File.Delete(filePath);
+
                 return new TrackDataExternal(result)
                 {
                     Status = "Not Found and Inserted"
