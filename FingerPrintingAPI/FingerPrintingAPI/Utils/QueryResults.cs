@@ -64,11 +64,10 @@ namespace FingerPrintingAPI.Utils
 
         }
 
-        public TrackData ExtractCandidatesWithMinHashAlgorithm(string file)
+        public TrackData ExtractCandidatesWithMinHashAlgorithm(string pathToFile)
         {
             int verified = 0;
             
-            string pathToFile = file; /*Path to song to recognize*/
             TagInfo tags = tagService.GetTagInfo(pathToFile); // Get Tags from file
 
             if (tags == null || tags.IsEmpty)
@@ -112,12 +111,14 @@ namespace FingerPrintingAPI.Utils
             
             if (!queryResult.IsSuccessful)
             {
+                File.Delete(pathToFile);
                 return null;
             }
 
             verified++;
             TrackData recognizedTrack = queryResult.BestMatch.Track;
 
+            File.Delete(pathToFile);
             return recognizedTrack;
 
         }
