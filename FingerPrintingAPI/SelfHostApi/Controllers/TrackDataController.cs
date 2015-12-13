@@ -20,6 +20,7 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Http;
+using System.Configuration;
 
 namespace SelfHostApi.Controllers
 {
@@ -38,26 +39,36 @@ namespace SelfHostApi.Controllers
         public TrackDataExternal GetTrackData([FromBody]AudioRequest request)
         {
             TrackData result = null;
-            string filePath = string.Empty; 
-            
-                try
-                {
-                    filePath = string.Format(@"D:\Dev\Temp\{0}{1}", request.FileName,  request.FileType);
-                    File.WriteAllBytes(filePath, request.Content);
-                }
-                catch (IOException)
-                {
-                    throw new HttpResponseException(
-                        new HttpResponseMessage
-                        {
-                            ReasonPhrase = "Could not read the request",
-                            StatusCode = HttpStatusCode.InternalServerError
-                        });
-                }
-            
+            string filePath = string.Empty;
 
-            QueryResults winQueryResults = new QueryResults(10, 20, 25, 4, 5,
-                WinUtils.GetStride(StrideType.IncrementalRandom, 512, 256, configuration.SamplesPerFingerprint),
+            try
+            {
+                filePath = string.Format(ConfigurationManager.AppSettings["TempFolderTemplate"], request.FileName, request.FileType);
+                File.WriteAllBytes(filePath, request.Content);
+            }
+            catch (IOException)
+            {
+                throw new HttpResponseException(
+                    new HttpResponseMessage
+                    {
+                        ReasonPhrase = "Could not read the request",
+                        StatusCode = HttpStatusCode.InternalServerError
+                    });
+            }
+
+            var stride = WinUtils.GetStride(
+                    StrideType.IncrementalRandom,
+                    Convert.ToInt32(ConfigurationManager.AppSettings["MaxStride"]),
+                    Convert.ToInt32(ConfigurationManager.AppSettings["MinStride"]),
+                    configuration.SamplesPerFingerprint);
+
+            QueryResults winQueryResults = new QueryResults(
+                Convert.ToInt32(ConfigurationManager.AppSettings["SecondsToAnalyze"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["StartSecond"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["HashTables"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["HashKeys"]),
+                Convert.ToInt32(ConfigurationManager.AppSettings["TreshHold"]),
+                stride,
                 tagService,
                 modelService,
                 audioService,
@@ -68,6 +79,9 @@ namespace SelfHostApi.Controllers
             if (result == null)
             {
                 result = new AddAudio().InsertToDatabase(filePath);
+
+                File.Delete(filePath);
+
                 return new TrackDataExternal(result)
                 {
                     Status = "Not Found and Inserted"
@@ -81,8 +95,8 @@ namespace SelfHostApi.Controllers
                     Status = "Found"
                 };
 
-            }            
-        }    
+            }
+        }
 
     }
 }

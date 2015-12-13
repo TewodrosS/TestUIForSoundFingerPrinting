@@ -14,8 +14,7 @@ namespace SelfHostApi.Models
         {
             Album = t.Album;
             Artist = t.Artist;
-            GroupId = t.GroupId;
-            ISRC = t.ISRC;
+            GroupId = t.GroupId;            
             ReleaseYear = t.ReleaseYear;
             Title = t.Title;
             TrackLengthSec = t.TrackLengthSec;            
@@ -25,7 +24,6 @@ namespace SelfHostApi.Models
         public string Album { get; set; }
         public string Artist { get; set; }
         public string GroupId { get; set; }
-        public string ISRC { get; set; }
         public int ReleaseYear { get; set; }
         public string Title { get; set; }
         public double TrackLengthSec { get; set; }              

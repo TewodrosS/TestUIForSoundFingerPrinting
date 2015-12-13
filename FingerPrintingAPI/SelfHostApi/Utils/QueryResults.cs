@@ -25,7 +25,7 @@ namespace SelfHostApi.Utils
         private const string ColResult = "Result";
         private const string ColHammingAvg = "HammingAvg";
         private const string ColNumberOfCandidates = "TotalNumberOfAnalyzedCandidates";
-        private const string ColISRC = "ISRC";
+        //private const string ColISRC = "ISRC";
 
         private readonly int hashKeys;
         private readonly int hashTables;
@@ -64,11 +64,10 @@ namespace SelfHostApi.Utils
 
         }
 
-        public TrackData ExtractCandidatesWithMinHashAlgorithm(string file)
+        public TrackData ExtractCandidatesWithMinHashAlgorithm(string pathToFile)
         {
             int verified = 0;
-            
-            string pathToFile = file; /*Path to song to recognize*/
+
             TagInfo tags = tagService.GetTagInfo(pathToFile); // Get Tags from file
 
             if (tags == null || tags.IsEmpty)
@@ -82,7 +81,7 @@ namespace SelfHostApi.Utils
             string title = string.IsNullOrEmpty(tags.Title)
                                ? Path.GetFileNameWithoutExtension(pathToFile)
                                : tags.Title; // Title
-            string isrc = tags.ISRC;
+            //string isrc = tags.ISRC;
             double duration = tags.Duration; // Duration
 
             // Check whether the duration is ok
@@ -100,7 +99,7 @@ namespace SelfHostApi.Utils
                                                 fingerprintConfig.HashingConfig.NumberOfLSHTables = hashTables;
                                                 fingerprintConfig.HashingConfig.NumberOfMinHashesPerTable = hashKeys;
                                                 fingerprintConfig.SpectrogramConfig.Stride = queryStride;
-;
+                                                ;
                                             },
                                             queryConfig =>
                                             {
@@ -109,7 +108,7 @@ namespace SelfHostApi.Utils
                                         .UsingServices(modelService, audioService)
                                         .Query()
                                         .Result;
-            
+
             if (!queryResult.IsSuccessful)
             {
                 return null;
@@ -118,6 +117,7 @@ namespace SelfHostApi.Utils
             verified++;
             TrackData recognizedTrack = queryResult.BestMatch.Track;
 
+            File.Delete(pathToFile);
             return recognizedTrack;
 
         }

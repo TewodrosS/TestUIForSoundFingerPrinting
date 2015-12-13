@@ -37,8 +37,7 @@ namespace SelfHostApi.Utils
             {
                 // tags null
             }
-
-            string isrc = tags.ISRC;
+            
             string artist = tags.Artist; // Artist
             string title = tags.Title; // Title
             int releaseYear = tags.Year;
@@ -49,26 +48,14 @@ namespace SelfHostApi.Utils
             if (duration < MinTrackLength || duration > MaxTrackLength)
             {
                 // Duration too small                    
-            }
-
-            // Check whether the tags are properly defined
-            if (string.IsNullOrEmpty(isrc) && (string.IsNullOrEmpty(artist) || string.IsNullOrEmpty(title)))
-            {
-                //"ISRC Tag is missing. Skipping file..."
-            }
+            }            
 
             IModelReference trackReference;
             try
             {
                 lock (this)
                 {
-                    // Check if this file is already in the database
-                    if (IsDuplicateFile(isrc, artist, title))
-                    {
-                        //duplicate file exist
-                    }
-
-                    trackData = new TrackData(isrc, artist, title, album, releaseYear, (int)duration);
+                    trackData = new TrackData(artist, title, album, releaseYear, (int)duration);
                     trackReference = modelService.InsertTrack(trackData); // Insert new Track in the database                    
                 }
             }
@@ -110,7 +97,7 @@ namespace SelfHostApi.Utils
         {
             if (!string.IsNullOrEmpty(isrc))
             {
-                return modelService.ReadTrackByISRC(isrc) != null;
+                return modelService.ReadTrackByArtistAndTitleName(artist, title) != null;
             }
 
             return modelService.ReadTrackByArtistAndTitleName(artist, title).Any();
