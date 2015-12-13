@@ -3,6 +3,8 @@
     ViewBag.Title = "Waternomics";
 }
 
+@model string
+
 <h2>Index</h2>
 
 <form action="~/TrackData/SendFile" method="post" enctype="multipart/form-data">
@@ -10,5 +12,10 @@
     <label for="audioFile">AudioFile:</label>
     <input type="file" name="audio" id="audio" />
 
-    <input type="submit" value="Upload" />
+    <input type="submit" value="SendFile" />
 </form>
+
+<br/>
+<br/>
+
+<p><span style="white-space: pre-line">@Model</span></p>

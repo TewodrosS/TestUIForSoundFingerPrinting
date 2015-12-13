@@ -24,19 +24,19 @@ namespace WebSender.Controllers
         [HttpPost]
         public ActionResult SendFile()
         {
-            string directory = @"D:\Temp\";
-
             HttpPostedFileBase audioFile = Request.Files["audio"];
+            string result = string.Empty;
+            string fileName = string.Empty;
 
             if (audioFile != null && audioFile.ContentLength > 0)
             {
-                var fileName = Path.GetFileName(audioFile.FileName);
-                SendFile(fileName, audioFile.InputStream);
+                fileName = Path.GetFileName(audioFile.FileName);
+                result = SendFile(fileName, audioFile.InputStream);
             }
 
-            return RedirectToAction("Index");
+            return View("Index", (object)string.Format("File: {0}\nResult: {1}\n", fileName, result));
         }
-        private void SendFile(string path, Stream fileStream)
+        private string SendFile(string path, Stream fileStream)
         {
             AudioRequest request = new AudioRequest();
 
@@ -55,30 +55,8 @@ namespace WebSender.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
-                // New code:
                 HttpResponseMessage response = client.PostAsync("api/trackdata", content).Result;
-
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    string stringResult = response.Content.ReadAsStringAsync().Result;
-
-                    if (string.IsNullOrWhiteSpace(stringResult) || stringResult == "null")
-                    {
-                        //audio not found
-
-                    }
-                    else
-                    {
-                        var result = JsonConvert.DeserializeObject<TrackData>(stringResult);
-                        FormatJson(stringResult);                        
-                    }
-                }
-
-                else
-                {
-                    response.StatusCode.ToString();                    
-                }
+                return response.Content.ReadAsStringAsync().Result;
             }
         }
 
