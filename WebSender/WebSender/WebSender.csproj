@@ -106,7 +106,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AudioRequest.cs" />
+    <Compile Include="Models\FileSizeAttribute.cs" />
+    <Compile Include="Models\FileTypes.cs" />
     <Compile Include="Models\TrackData.cs" />
+    <Compile Include="Models\UploadFileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

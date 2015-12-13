@@ -21,8 +21,8 @@ namespace WebSender
 
             routes.MapRoute(
                 name: "SendFile",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "TrackData", action = "SendFile", id = UrlParameter.Optional }
+                url: "{controller}/{action}/{fileModel}",
+                defaults: new { controller = "TrackData", action = "SendFile", fileModel = UrlParameter.Optional }
             );
         }
     }

@@ -22,9 +22,13 @@ namespace WebSender.Controllers
         }
 
         [HttpPost]
-        public ActionResult SendFile()
+        public ActionResult SendFile(UploadFileModel fileModel)
         {
-            HttpPostedFileBase audioFile = Request.Files["audio"];
+            if (!ModelState.IsValid)
+            {
+                return View("Index");
+            }
+            HttpPostedFileBase audioFile = fileModel.File;
             string result = string.Empty;
             string fileName = string.Empty;
 
@@ -35,6 +39,7 @@ namespace WebSender.Controllers
             }
 
             return View("Index", (object)string.Format("File: {0}\nResult: {1}\n", fileName, result));
+
         }
         private string SendFile(string path, Stream fileStream)
         {
