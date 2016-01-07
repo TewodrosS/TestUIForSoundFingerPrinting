@@ -20,31 +20,53 @@ namespace BulckSender
             List<string> results = new List<string>();
             string outputPath = ConfigurationManager.AppSettings["OutputPath"];
 
+            string FtpAddress = ConfigurationManager.AppSettings["FtpAddress"];
+            string UserName = ConfigurationManager.AppSettings["UserName"];
+            string Password = ConfigurationManager.AppSettings["Password"];
+
+            //try
+            //{
+            //    string path = ConfigurationManager.AppSettings["FolderLocation"];
+            //    FileAttributes attr = File.GetAttributes(path);                
+
+            //    if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            //    {
+            //        var fileList = GetFiles(filters, path);
+            //        foreach (var file in fileList)
+            //        {
+            //            using (var stream = new FileStream(file, FileMode.Open))
+            //            {
+            //                var response = SendFile(file, stream);
+
+            //                results.Add(string.Format("File: {0}\nResult: {1}\n", file, response));
+            //            }
+            //        }
+            //    }
+            //}
+
             try
             {
-                string path = ConfigurationManager.AppSettings["FolderLocation"];
-                FileAttributes attr = File.GetAttributes(path);                
+                var ftpClient = new FtpClient(UserName, Password, FtpAddress);
 
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                var fileList = ftpClient.GetFiles(filters);
+
+                foreach (var file in fileList)
                 {
-                    var fileList = GetFiles(filters, path);
-                    foreach (var file in fileList)
+                    using (Stream stream = ftpClient.GetFileStream(file))
                     {
-                        using (var stream = new FileStream(file, FileMode.Open))
-                        {
-                            var response = SendFile(file, stream);
+                        var response = SendFile(file, stream);
 
-                            results.Add(string.Format("File: {0}\nResult: {1}\n", file, response));
-                        }
+                        results.Add(string.Format("File: {0}\nResult: {1}\n", file, response));
                     }
                 }
+
             }
             finally
             {
                 File.WriteAllLines(outputPath, results, Encoding.UTF8);
             }
         }
-       
+
 
         public static byte[] ReadByte(Stream input)
         {
